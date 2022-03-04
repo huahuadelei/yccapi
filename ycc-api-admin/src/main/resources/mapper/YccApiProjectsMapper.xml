@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.ycc.api.admin.mapper.YccApiProjectsMapper">
+
+    <resultMap id="def_result_map" type="yccApiProjects">
+        <id column="id" property="id"></id>
+        <result column="project_desc" property="projectDesc"></result>
+        <result column="project_name" property="projectName"></result>
+        <result column="profile_test_url" property="profileTestUrl"></result>
+        <result column="profile_dev_url" property="profileDevUrl"></result>
+        <result column="def_version_id" property="defVersionId"></result>
+        <result column="del" property="del"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="update_time" property="updateTime"></result>
+
+        <collection property="versionList" ofType="yccApiProjectVersion">
+            <id column="versionId" property="id"></id>
+            <result column="id" property="projectId"></result>
+            <result column="version_info" property="versionInfo"></result>
+        </collection>
+
+    </resultMap>
+
+    <select id="getProjectPage" resultMap="def_result_map">
+        SELECT
+            p.id,
+            p.project_desc,
+            p.project_name,
+            p.profile_test_url,
+            p.profile_dev_url,
+            p.def_version_id,
+            p.del,
+            p.create_time,
+            p.update_time,
+            v.id versionId,
+            v.version_info
+        FROM
+            ycc_api_projects p
+            LEFT JOIN ycc_api_projects_versions v ON v.project_id = p.id
+            AND v.del = 0
+        WHERE
+            p.del =0
+            <if test="e.projectName != null and e.projectName != ''.toString() ">
+                AND p.project_name like CONCAT('%',#{e.projectName},'%')
+            </if>
+         ORDER by p.create_time desc
+    </select>
+</mapper>

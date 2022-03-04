@@ -1,0 +1,159 @@
+$header-bg-color:#367FA9;
+$menu-bg-color:#222D32;
+// $menu-bg-color:#000;
+$def-menu-width:230px;
+
+body{
+    min-height: 100vh;
+    #app{
+        height: 100vh;
+    }
+}
+
+.text-weight{
+    font-weight: bold;
+}
+.text-not-select{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
+
+.ivu-auto-complete.ivu-select-dropdown{
+    max-height: 250px !important;
+  }
+
+.def-box-shadow{
+    box-shadow: 0 0 4px rgba($color: #000000, $alpha: .2);
+}
+
+.ivu-card-body{
+    height: calc(100% - 50px) ;
+}
+
+.full-left{
+    float: left;
+}
+
+.full-right{
+    float: right;
+}
+
+.text-full-left{
+    text-align: left;
+}
+.text-full-right{
+    text-align: right;
+}
+.text-full-center{
+    text-align: center;
+}
+
+.my-tag-def{
+    border-color: #d6d6d6;
+    background-color:#F4F4F4;
+    color: rgb(61, 60, 60);
+}
+.my-tag-error{
+    border-color: #a11818;
+    background-color:#df5252;
+    color: rgb(255, 255, 255);
+}
+
+.my-tag-warning{
+    border-color: #be8314;
+    background-color:#cea00b;
+    color: rgb(255, 255, 255);
+}
+
+.my-tag-success{
+    border-color: #32ad69;
+    background-color: #04aa4c;
+    color: rgb(250, 244, 244);
+}
+
+.my-tag-info{
+    border-color: #3891cc;
+    background-color: #2b86db;
+    color: rgb(250, 244, 244);
+}
+
+.my-tag-alter{
+    border-color: #6133b8;
+    background-color: #7c26c2;
+    color: rgb(250, 244, 244);
+}
+
+.my-tag{
+    padding: 1px 5px;
+    display: inline-block;
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+
+    & + .my-tag{
+        margin-left: 15px;
+    }
+    @extend .my-tag-def;
+}
+
+.my-link{
+    color:rgb(190, 164, 14);
+    text-decoration-line:underline ;
+}
+.list-hover{
+    cursor: pointer;
+    &:hover{
+      transform: scale(1.2);
+      color: rgb(110, 107, 107);
+    }
+    
+  }
+
+.floor-tools {
+
+    .ivu-page-next:hover, .ivu-page-prev:hover {
+        border-color:  #6ebca2 !important;
+    }
+    .ivu-page-item-active{
+        border-color:  #6ebca2 !important;
+    }
+    .ivu-page-item:hover {
+        border-color:  #6ebca2 !important;
+    }
+    .ivu-page-item-active a, .ivu-page-item-active:hover a {
+        color: #6ebca2 !important;
+    }
+    .ivu-page-item:hover a {
+        color: #6ebca2 !important;
+    }
+
+}
+
+
+/**
+    iview munu选中状态的文本颜色
+*/
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu){
+    
+    @extend %menuActiveStyle;
+}
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title{
+    border-left: 3px solid transparent;
+}
+
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item:hover, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title:hover{
+    @extend %menuActiveStyle;
+}
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):hover, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu):hover{
+    background-color: #1E282C;
+}
+%menuActiveStyle{
+    color:#ffffff;
+    border-left: 3px solid #3C8DBC;
+    background-color: #1E282C;
+}

@@ -1,0 +1,15 @@
+server:
+  servlet:
+    context-path: /ycc-api-admin
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: id_worker_str
+      logic-delete-field: del
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+      table-underline: true
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: cn.ycc.api.admin.entity
+  configuration:
+    map-underscore-to-camel-case: true

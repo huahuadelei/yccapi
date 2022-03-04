@@ -1,0 +1,43 @@
+server.port=8099
+server.servlet.context-path=/ycc-api-admin
+server.tomcat.accesslog.enabled=true
+server.tomcat.accesslog.pattern=%h %l %u %t "%r" %s %b %D %{User-Agent}i
+server.tomcat.accesslog.directory=${project.home}/logs/access
+
+##################################################
+#               jxls模板存放目录                 #
+##################################################
+jxls.template-dir=
+
+
+##################################################
+#                   CACHE STTING                 #
+##################################################
+# cache.use 设置缓存类型,取值：embd和 redis 默认为embd
+
+# 使用ehcache作为缓存
+#cache.use=embd
+
+# 使用redis作为缓存
+#cache.use=redis
+#spring.redis.host=[redis_host]
+#spring.redis.port=[redis_port]
+#spring.redis.database=1
+#spring.redis.password=[redis_password]
+
+##################################################
+#                DATASOURCE STTING               #
+##################################################
+# db.use 数据源的设置 可选参数为：embd 、mysql 默认为embd
+
+#使用H2作为数据源
+#db.use=embd
+
+# 使用Mysql作为数据源
+#db.use=mysql
+#spring.datasource.type= com.alibaba.druid.pool.DruidDataSource
+#spring.datasource.driver-class-name= com.mysql.cj.jdbc.Driver
+#spring.datasource.url= jdbc:mysql://localhost:3306/ycc-api?useUnicode=true&characterEncoding=UTF-8
+#spring.datasource.username= [mysql_username]
+#spring.datasource.password= [mysql_password]
+

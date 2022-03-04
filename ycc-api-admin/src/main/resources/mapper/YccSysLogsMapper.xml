@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.ycc.api.admin.mapper.YccSysLogsMapper">
+
+    <select id="selectSysLogPage" resultType="yccSysLogs">
+
+        SELECT
+        l.id,
+        l.successed,
+        l.log_info,
+        l.ip_addr,
+        l.user_id,
+        l.invoke_times,
+        l.class_method,
+        l.req_url,
+        l.req_method,
+        l.req_header,
+        l.req_data,
+        l.resp_data,
+        l.error_msg,
+        l.del,
+        l.create_time,
+        l.update_time,
+        u.username
+        FROM
+        ycc_sys_logs l
+        left join ycc_user u on u.id= l.user_id
+        <where>
+            l.del=0
+            <if test='e.startDate != null and e.startDate != "" '>
+               and date_format(l.create_time,'%Y-%m-%d') &gt;= #{e.startDate}
+            </if>
+
+            <if test='e.endDate != null and e.endDate != "" '>
+                and date_format(l.create_time,'%Y-%m-%d') &lt;= #{e.endDate}
+            </if>
+
+            <if test="e.logInfo != null and e.logInfo != ''.toString()">
+                and l.log_info like concat('%',#{e.logInfo},'%')
+            </if>
+
+            <if test="e.reqUrl != null and e.reqUrl != ''.toString()">
+                and l.req_url like concat('%',#{e.reqUrl},'%')
+            </if>
+
+            <if test="e.successed != null and (e.successed == 1 or e.successed == 0)">
+                and l.successed=#{e.successed}
+            </if>
+        </where>
+        ORDER BY
+        l.create_time DESC
+    </select>
+</mapper>

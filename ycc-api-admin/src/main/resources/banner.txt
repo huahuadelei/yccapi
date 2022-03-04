@@ -1,0 +1,6 @@
+_____.___.               _____         .__
+\__  |   | ____  ____   /  _  \ ______ |__|   YccApi:v1.0.0
+ /   |   |/ ___\/ ___\ /  /_\  \\____ \|  |   进程ID:${PID}
+ \____   \  \__\  \___/    |    \  |_> >  |   DB:${db.use}  CACHE:${cache.use}
+ / ______|\___  >___  >____|__  /   __/|__|   URL:http://localhost:${server.port}${server.servlet.context-path}/index
+ \/           \/    \/        \/|__|

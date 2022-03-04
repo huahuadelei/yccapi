@@ -1,0 +1,5 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+   cn.ycc.api.admin.commons.utils.GlobalPropertiesUtils
+
+org.springframework.context.ApplicationContextInitializer=\
+   cn.ycc.api.admin.commons.config.ApplicationContextInitAfterDataSourceSelector

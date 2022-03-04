@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.ycc.api.admin.mapper.YccApiViewGroupMapper">
+
+    <insert id="insertViewVersionData">
+        INSERT INTO
+        ycc_api_view_versions
+            (
+                id,
+                view_group_id,
+                project_version_id,
+                del,
+                create_time,
+                update_time
+            )
+
+        VALUES
+            (
+                #{id},
+                #{viewId},
+                #{versionId},
+                0,
+                now(),
+                now()
+            )
+    </insert>
+
+    <resultMap id="views_versions_result_map" type="java.util.Map">
+        <id column="viewId" property="viewId" javaType="java.lang.String"></id>
+        <result column="viewName" property="viewName" javaType="java.lang.String"></result>
+        <result column="hasPass" property="hasPass" javaType="java.lang.Integer"></result>
+        <result column="showPass" property="showPass" javaType="java.lang.String"></result>
+        <result column="isExp" property="isExp" javaType="java.lang.Integer"></result>
+        <result column="surplusDays" property="surplusDays" javaType="java.lang.Integer"></result>
+        <result column="expDate" property="expDate" javaType="java.util.Date"></result>
+        <result column="isTestable" property="isTestable" javaType="java.lang.Integer"></result>
+        <result column="projectId" property="projectId" javaType="java.lang.String"></result>
+        <result column="projectName" property="projectName" javaType="java.lang.String"></result>
+    </resultMap>
+
+    <resultMap id="ViewVersionsByViewId_map" type="java.util.Map">
+        <id column="versionId" property="versionId" javaType="java.lang.String"></id>
+        <result column="versionName" property="versionName" javaType="java.lang.String"></result>
+        <result column="viewVersionId" property="viewVersionId" javaType="java.lang.String"></result>
+        <result column="versionApiCounter" property="versionApiCounter" javaType="java.lang.Long"></result>
+    </resultMap>
+
+    <select id="queryViewVersionsByViewId" resultMap="ViewVersionsByViewId_map" >
+        select
+            pv.id versionId,
+            pv.version_info versionName,
+            vv.id viewVersionId,
+            (case when counter.count is not null then counter.count else 0 end) versionApiCounter
+        from
+            ycc_api_view_versions vv
+            JOIN ycc_api_projects_versions pv ON pv.id = vv.project_version_id
+            AND pv.del = 0
+            LEFT JOIN (
+             select a.project_version_id as versionId,count(1) as count from ycc_api_info a where a.del=0 group by a.project_version_id
+            ) as counter on counter.versionId = vv.project_version_id
+        where
+          vv.del = 0
+          and vv.view_group_id=#{viewId}
+    </select>
+
+    <select id="queryViewDatas" resultMap="views_versions_result_map" databaseId="mysql">
+      SELECT
+            vg.id viewId,
+            vg.view_group_name viewName,
+            vg.has_pass hasPass,
+            vg.show_pass showPass,
+            vg.is_exp isExp,
+            IF( vg.is_exp = 1, datediff( vg.exp_date, now( ) ), 99999 ) surplusDays,
+            vg.exp_date expDate,
+            vg.is_testable isTestable,
+            p.id projectId,
+            p.project_name projectName
+        FROM
+            ycc_api_view_group vg
+            LEFT JOIN ycc_api_projects p ON p.id = vg.project_id
+            AND p.del = 0
+        WHERE
+            vg.del = 0
+            <if test="cm.id!=null and cm.id!=''.toString()">
+                and vg.id=#{cm.id}
+            </if>
+            <if test="cm.viewStatus!=null and cm.viewStatus==1">
+                and IF( vg.is_exp = 1, datediff( vg.exp_date, now( ) ), 99999 ) &gt;= 0
+            </if>
+            <if test="cm.viewStatus!=null and cm.viewStatus==2">
+                and IF( vg.is_exp = 1, datediff( vg.exp_date, now( ) ), 99999 ) &lt; 0
+            </if>
+
+            <if test="cm.likeKey!=null and cm.likeKey!=''.toString()">
+                and (vg.view_group_name like concat('%',#{cm.likeKey},'%') or p.project_name like concat('%',#{cm.likeKey},'%'))
+            </if>
+
+
+    </select>
+
+    <select id="viewCounter" resultType="java.util.Map" databaseId="mysql">
+        SELECT
+            ( SELECT count( 1 ) FROM ycc_api_view_group WHERE del = 0 ) AS total,
+            (
+            SELECT
+            count( 1 )
+            FROM
+            ycc_api_view_group
+            WHERE
+            del = 0
+            AND ( is_exp != 1 OR ( IF ( is_exp = 1, datediff( exp_date, now( ) ), 99999 ) &gt;= 0 ) )
+            ) AS published,
+            (
+            SELECT
+            count( 1 )
+            FROM
+            ycc_api_view_group
+            WHERE
+            del = 0
+            AND is_exp = 1
+            AND datediff( exp_date, now( ) ) &lt; 0
+            ) AS obsolete
+    </select>
+
+    <select id="queryViewDatas" resultMap="views_versions_result_map" databaseId="h2">
+        SELECT
+        vg.id viewId,
+        vg.view_group_name viewName,
+        vg.has_pass hasPass,
+        vg.show_pass showPass,
+        vg.is_exp isExp,
+        (case when vg.is_exp = 1 then datediff( 'day',now( ),vg.exp_date) else 99999 end) surplusDays,
+        vg.exp_date expDate,
+        vg.is_testable isTestable,
+        p.id projectId,
+        p.project_name projectName
+        FROM
+        ycc_api_view_group vg
+        LEFT JOIN ycc_api_projects p ON p.id = vg.project_id
+        AND p.del = 0
+        WHERE
+        vg.del = 0
+        <if test="cm.id!=null and cm.id!=''.toString()">
+            and vg.id=#{cm.id}
+        </if>
+        <if test="cm.viewStatus!=null and cm.viewStatus==1">
+            and (case when vg.is_exp = 1 then datediff( 'day',now( ),vg.exp_date) else 99999 end) &gt;= 0
+        </if>
+        <if test="cm.viewStatus!=null and cm.viewStatus==2">
+            and (case when vg.is_exp = 1 then datediff( 'day',now( ),vg.exp_date) else 99999 end) &lt; 0
+        </if>
+
+        <if test="cm.likeKey!=null and cm.likeKey!=''.toString()">
+            and (vg.view_group_name like concat('%',#{cm.likeKey},'%') or p.project_name like concat('%',#{cm.likeKey},'%'))
+        </if>
+
+    </select>
+
+    <select id="viewCounter" resultType="java.util.Map" databaseId="h2">
+        SELECT
+        ( SELECT count( 1 ) FROM ycc_api_view_group WHERE del = 0 ) AS total,
+        (
+        SELECT
+        count( 1 )
+        FROM
+        ycc_api_view_group
+        WHERE
+        del = 0
+        AND ( is_exp != 1 OR ( case when is_exp = 1 then datediff('day', now( ),exp_date ) else 99999 end) &gt;= 0 )
+        ) AS published,
+        (
+        SELECT
+        count( 1 )
+        FROM
+        ycc_api_view_group
+        WHERE
+        del = 0
+        AND is_exp = 1
+        AND datediff('day', now( ),exp_date ) &lt; 0
+        ) AS obsolete
+    </select>
+
+    <resultMap id="view_byversionid_map" type="java.util.Map">
+        <id column="id" property="id" javaType="java.lang.String"></id>
+        <result column="viewId" property="viewId" javaType="java.lang.String"></result>
+        <result column="projectVersionId" property="projectVersionId" javaType="java.lang.String"></result>
+        <result column="del" property="del" javaType="java.lang.Integer"></result>
+    </resultMap>
+    <select id="queryViewVersionByVersionId" resultMap="view_byversionid_map">
+        SELECT
+            id,
+            view_group_id as viewId,
+            project_version_id as projectVersionId,
+            del
+         FROM
+            ycc_api_view_versions
+          where
+            del=0
+            and project_version_id=#{versionId}
+    </select>
+
+    <update id="deleteViewViersionById" >
+        update ycc_api_view_versions  set del=1 where id=#{viewVersionId}
+    </update>
+</mapper>
